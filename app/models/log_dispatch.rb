@@ -20,12 +20,10 @@ class LogDispatch < ApplicationRecord
     { wait: WAIT_PERIOD.send(WAIT_UNIT) }
   end
 
-  # TODO: Why must I explicitly pass `mailer_klass`? Somethings not right with
-  #       mocks.
-  def self.send_routine_emails(log, device, mailer_klass = LogDeliveryMailer)
+  def self.send_routine_emails(log, device)
     return unless (log.channels || []).include?("email")
     self.create!(device: device, log: log)
-    mailer_klass.log_digest(device).deliver_later(digest_wait_time)
+    LogDeliveryMailer.log_digest(device).deliver_later(digest_wait_time)
   end
 
   def self.send_fatal_emails(log, device)
