@@ -29,11 +29,4 @@ before_install:
 install:
   - yarn install
   - bundle install --jobs=3 --retry=3 --path=.vendor/bundle
-before_script:
-- cp config/database.travis.yml config/database.yml
-- bundle exec rake db:create db:migrate
-script:
-- bundle exec rspec --fail-fast=3
-- npm run typecheck
-- npm run test-slow
-- npm run coverage
+script: bin/travis-build

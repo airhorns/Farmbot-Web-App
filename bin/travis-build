@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+fold_start() {
+  echo -e "travis_fold:start:$1\033[33;1m$2\033[0m"
+}
+
+fold_end() {
+  echo -e "\ntravis_fold:end:$1\r"
+}
+set -eo pipefail
+cp config/database.travis.yml config/database.yml
+
+fold_start migrate.1 "migrate rails database"
+bundle exec rake db:create db:migrate
+fold_end migrate.1
+
+fold_start rspec.1 "run rspec tests"
+bundle exec rspec --fail-fast=3
+fold_end rspec.1
+
+fold_start npmtest.1 "run npm tests and coverage"
+npm run typecheck
+npm run test-slow
+npm run coverage
+fold_end npmtest.1
